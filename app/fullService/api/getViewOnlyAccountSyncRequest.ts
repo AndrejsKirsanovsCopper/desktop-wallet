@@ -7,8 +7,7 @@ export type GetViewOnlyAccountImportSyncParams = {
 };
 
 export type GetViewOnlyAccountSyncRequestResult = {
-  accountId: string;
-  incompleteTxosEncoded: string[];
+  txoSyncRequest: { accountId: string; incompleteTxosEncoded: string[] };
 };
 
 const getViewOnlyAccountSyncRequest = async ({

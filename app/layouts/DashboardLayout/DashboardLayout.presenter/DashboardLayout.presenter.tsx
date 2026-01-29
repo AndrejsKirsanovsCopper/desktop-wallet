@@ -76,7 +76,7 @@ export const DashboardLayout: FC<DashboardLayoutProps> = (
 
   const importViewOnlySync = async () => {
     const rawRequest = await ipcRenderer.invoke('import-file');
-    const parsedParams = camelCaseObjectKeys(JSON.parse(rawRequest).params);
+    const parsedParams = camelCaseObjectKeys(JSON.parse(rawRequest));
     dispatch(setLoadingAction(true));
     await syncViewOnlyAccount(parsedParams);
     await getAllTransactionLogsForAccount(selectedAccount.account.accountId);
@@ -104,7 +104,10 @@ export const DashboardLayout: FC<DashboardLayoutProps> = (
     const response = await getViewOnlyAccountSyncRequest({
       accountId: selectedAccount.account.accountId,
     });
-    await downloadJson(JSON.stringify(snakeCaseKeys(response)), 'view_only_sync_request');
+    await downloadJson(
+      JSON.stringify(snakeCaseKeys(response.txoSyncRequest)),
+      'view_only_sync_request'
+    );
   };
 
   const accountBalance = selectedAccount.balanceStatus.balancePerToken[tokenId];

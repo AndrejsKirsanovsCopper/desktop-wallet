@@ -4,23 +4,20 @@ const SYNC_VIEW_ONLY_ACCOUNT_METHOD = 'sync_view_only_account';
 
 export type SyncViewOnlyAccountParams = {
   accountId: string;
-  completedTxos?: [string, string][];
-  nextSubaddressIndex?: string;
+  syncedTxos?: { txOutPublicKey: string; keyImage: string }[];
 };
 
 export type SyncViewOnlyAccountResult = boolean;
 
 const getViewOnlyAccountSyncRequest = async ({
   accountId,
-  completedTxos,
-  nextSubaddressIndex,
+  syncedTxos,
 }: SyncViewOnlyAccountParams): Promise<SyncViewOnlyAccountResult> => {
   const { error }: AxiosFullServiceResponse<unknown> = await axiosFullService(
     SYNC_VIEW_ONLY_ACCOUNT_METHOD,
     {
       accountId,
-      completedTxos,
-      nextSubaddressIndex,
+      syncedTxos,
     }
   );
   if (error) {

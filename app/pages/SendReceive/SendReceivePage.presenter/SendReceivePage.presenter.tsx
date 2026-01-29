@@ -313,8 +313,34 @@ export const SendReceivePage: FC = (): JSX.Element => {
     }
     const parsed = JSON.parse(transaction);
     const txConfirmation: TxConfirmation = {} as TxConfirmation;
-    txConfirmation.txProposal = parsed.params?.tx_proposal;
-    txConfirmation.feeConfirmation = BigInt(parsed.params?.tx_proposal?.fee_amount?.value);
+    const totalPayload =
+      parsed.params?.tx_proposal?.payload_txos?.reduce(
+        (accum: bigint, next: any) => accum + BigInt(next.amount.value),
+        0n
+      ) ?? 0n;
+    const totalInputs: bigint =
+      parsed.params?.tx_proposal?.input_txos?.reduce(
+        (accum: bigint, next: any) => accum + BigInt(next.amount.value),
+        0n
+      ) ?? 0n;
+    const totalChange: bigint =
+      parsed.params?.tx_proposal?.change_txos?.reduce(
+        (accum: bigint, next: any) => accum + BigInt(next.amount.value),
+        0n
+      ) ?? 0n;
+
+    const feeAmountValue = totalInputs - (totalPayload + totalChange);
+
+    txConfirmation.txProposal = {
+      ...parsed.params?.tx_proposal,
+      feeAmount: {
+        tokenId: '0',
+        value: feeAmountValue.toString(),
+      },
+      tombstoneBlockIndex: '0',
+    };
+
+    txConfirmation.feeConfirmation = feeAmountValue;
     txConfirmation.totalValueConfirmation = BigInt(
       parsed.params?.tx_proposal?.payload_txos?.reduce(
         (accum: number, next: any) => accum + next.amount.value,
